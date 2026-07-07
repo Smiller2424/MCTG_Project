@@ -149,8 +149,8 @@ export default function LeaderboardPage() {
             </h1>
 
             <p className="mt-2 text-sm text-slate-400">
-              Explore the highest-performing traders, compare their performance,
-              and discover strategies from the best investors on the platform.
+              Track the highest-performing traders, compare their performance,
+              and discover successful trading strategies across multiple prediction markets.
             </p>
           </div>
 
@@ -160,16 +160,16 @@ export default function LeaderboardPage() {
             </p>
 
             <p className="mt-1 text-lg font-semibold text-white">
-              Today
+              Updated Daily
             </p>
           </div>
         </section>
-                {/* Summary Stats */}
+        {/* Summary Stats */}
         <section className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {leaderboardStats.map((stat) => (
             <div
               key={stat.label}
-              className="rounded-2xl border border-slate-800 bg-slate-900 p-5"
+              className="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-5"
             >
               <p className="text-sm text-slate-400">{stat.label}</p>
 
@@ -182,6 +182,104 @@ export default function LeaderboardPage() {
               </p>
             </div>
           ))}
+        </section>
+        {/* Leaderboard Table */}
+        <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-white">
+                Top Ranked Traders
+              </h2>
+
+              <p className="mt-1 text-sm text-slate-400">
+                Browse the highest-performing traders across all tracked
+                Polymarket markets.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6 overflow-hidden rounded-xl border border-slate-800">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-slate-800">
+                <thead className="bg-slate-950">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
+                      Rank
+                    </th>
+
+                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
+                      Trader
+                    </th>
+
+                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-slate-500">
+                      Market
+                    </th>
+
+                    <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wide text-slate-500">
+                      Win Rate
+                    </th>
+
+                    <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wide text-slate-500">
+                      30-Day P/L
+                    </th>
+
+                    <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wide text-slate-500">
+                      Followers
+                    </th>
+
+                    <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wide text-slate-500">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody className="divide-y divide-slate-800 bg-slate-900">
+                  {traders.map((trader) => (
+                    <tr
+                      key={trader.rank}
+                      className="transition hover:bg-slate-800/60"
+                    >
+                      <td className="whitespace-nowrap px-4 py-4">
+                        <RankBadge rank={trader.rank} />
+                      </td>
+
+                      <td className="whitespace-nowrap px-4 py-4">
+                        <div>
+                          <p className="text-sm font-medium text-white">
+                            {trader.name}
+                          </p>
+
+                          <p className="text-xs text-slate-500">
+                            {trader.username}
+                          </p>
+                        </div>
+                      </td>
+
+                      <td className="whitespace-nowrap px-4 py-4 text-sm text-slate-300">
+                        {trader.markets}
+                      </td>
+
+                      <td className="whitespace-nowrap px-4 py-4 text-right text-sm text-white">
+                        {trader.winRate}%
+                      </td>
+
+                      <td className="whitespace-nowrap px-4 py-4 text-right">
+                        <PnlText value={trader.pnl} />
+                      </td>
+
+                      <td className="whitespace-nowrap px-4 py-4 text-right text-sm text-slate-300">
+                        {trader.followers.toLocaleString()}
+                      </td>
+
+                      <td className="whitespace-nowrap px-4 py-4 text-center">
+                        <FollowButton />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </section>
 
       </div>
