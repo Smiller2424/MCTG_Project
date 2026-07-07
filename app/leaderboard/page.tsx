@@ -90,7 +90,7 @@ function formatCurrency(value: number) {
   }).format(value);
 }
 
-// Components
+// Reusable Components
 function PnlText({ value }: { value: number }) {
   const isPositive = value >= 0;
 
@@ -128,5 +128,63 @@ function FollowButton() {
     <button className="rounded-full bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-400 ring-1 ring-cyan-500/20 transition hover:bg-cyan-500/20">
       Follow
     </button>
+  );
+}
+
+// Main Page
+export default function LeaderboardPage() {
+  return (
+    <main className="min-h-screen bg-slate-950 text-slate-100">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+
+        {/* Page Header */}
+        <section className="mb-8 flex flex-col gap-4 rounded-2xl border border-slate-800 bg-slate-900/70 p-6 shadow-xl shadow-black/20 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-sm font-medium text-cyan-400">
+              Leaderboard
+            </p>
+
+            <h1 className="mt-2 text-3xl font-bold tracking-tight text-white">
+              Top Polymarket Traders
+            </h1>
+
+            <p className="mt-2 text-sm text-slate-400">
+              Explore the highest-performing traders, compare their performance,
+              and discover strategies from the best investors on the platform.
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-slate-800 bg-slate-950 p-4">
+            <p className="text-xs uppercase tracking-wide text-slate-500">
+              Last Updated
+            </p>
+
+            <p className="mt-1 text-lg font-semibold text-white">
+              Today
+            </p>
+          </div>
+        </section>
+                {/* Summary Stats */}
+        <section className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {leaderboardStats.map((stat) => (
+            <div
+              key={stat.label}
+              className="rounded-2xl border border-slate-800 bg-slate-900 p-5"
+            >
+              <p className="text-sm text-slate-400">{stat.label}</p>
+
+              <p className="mt-2 text-2xl font-bold text-white">
+                {stat.value}
+              </p>
+
+              <p className="mt-1 text-sm text-slate-500">
+                {stat.detail}
+              </p>
+            </div>
+          ))}
+        </section>
+
+      </div>
+    </main>
   );
 }
