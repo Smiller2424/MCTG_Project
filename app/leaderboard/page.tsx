@@ -197,7 +197,15 @@ export default function LeaderboardPage() {
                 Polymarket markets.
               </p>
             </div>
-          </div>
+
+            <button
+            className="inline-flex items-center gap-2 rounded-xl border border-cyan-500/20 bg-cyan-500/10 px-4 py-2 text-sm font-medium text-cyan-400 transition hover:bg-cyan-500/20"
+            >
+                ↻ Refresh Rankings
+                </button>
+                </div>
+
+        
                 {/* Search and Sort */}
         <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="relative w-full md:max-w-lg">
