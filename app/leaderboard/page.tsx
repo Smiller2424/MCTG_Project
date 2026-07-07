@@ -187,8 +187,9 @@ export default function LeaderboardPage() {
         <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
+                
               <h2 className="text-lg font-semibold text-white">
-                Top Ranked Traders
+                Trader Rankings
               </h2>
 
               <p className="mt-1 text-sm text-slate-400">
@@ -197,8 +198,27 @@ export default function LeaderboardPage() {
               </p>
             </div>
           </div>
-
-          <div className="mt-6 overflow-hidden rounded-xl border border-slate-800">
+                {/* Search and Sort */}
+        <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="relative w-full md:max-w-lg">
+             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">
+             🔍
+             </span>
+             <input
+             type="text"
+             placeholder="Search traders..."
+             className="w-full rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 pl-10 text-sm text-white placeholder:text-slate-500 focus:border-cyan-500 focus:outline-none"
+             />
+             </div>
+           
+          <select className="rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-sm text-white focus:border-cyan-500 focus:outline-none">
+            <option>Sort By: Win Rate</option>
+            <option>Sort By: Profit</option>
+            <option>Sort By: Followers</option>
+            <option>Sort By: Rank</option>
+          </select>
+        </div>
+          <div className="mt-8 overflow-hidden rounded-xl border border-slate-800">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-slate-800">
                 <thead className="bg-slate-950">
