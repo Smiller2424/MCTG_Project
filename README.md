@@ -1,3 +1,25 @@
+# MCTG Polymarket Platform
+
+MCTG is a comprehensive Polymarket trading platform designed to allow users to connect their Web3 wallets, view trader rankings and analytics, and automatically execute "copy" or "fade" trades based on the activity of top performers.
+
+## Tech Stack
+* **Frontend:** Next.js (React 19), Tailwind CSS v4
+* **Backend:** Python, FastAPI (Planned)
+* **Database:** PostgreSQL (Planned)
+* **External APIs:** Polymarket API, Web3 Wallet Providers (RainbowKit)
+
+## Local Development Setup
+
+### Prerequisites
+* Node.js (v18+)
+
+### Frontend Setup
+1. Clone the repository:
+   ```bash
+   git clone [https://github.com/Smiller2424/MCTG_Project.git](https://github.com/Smiller2424/MCTG_Project.git)
+   cd MCTG_Project
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
