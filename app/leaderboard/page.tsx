@@ -1,3 +1,4 @@
+// Types
 type Trader = {
   rank: number;
   name: string;
@@ -8,6 +9,7 @@ type Trader = {
   followers: number;
 };
 
+// Data
 const leaderboardStats = [
   {
     label: "Top Trader",
@@ -79,10 +81,52 @@ const traders: Trader[] = [
   },
 ];
 
+// Helper Functions
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     maximumFractionDigits: 0,
   }).format(value);
+}
+
+// Components
+function PnlText({ value }: { value: number }) {
+  const isPositive = value >= 0;
+
+  return (
+    <span className={isPositive ? "text-emerald-400" : "text-red-400"}>
+      {isPositive ? "+" : ""}
+      {formatCurrency(value)}
+    </span>
+  );
+}
+
+function RankBadge({ rank }: { rank: number }) {
+  const styles = {
+    1: "bg-yellow-500/10 text-yellow-400 ring-yellow-500/20",
+    2: "bg-slate-500/10 text-slate-300 ring-slate-500/20",
+    3: "bg-orange-500/10 text-orange-400 ring-orange-500/20",
+  };
+
+  const defaultStyle =
+    "bg-cyan-500/10 text-cyan-400 ring-cyan-500/20";
+
+  return (
+    <span
+      className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ring-1 ${
+        styles[rank as keyof typeof styles] ?? defaultStyle
+      }`}
+    >
+      #{rank}
+    </span>
+  );
+}
+
+function FollowButton() {
+  return (
+    <button className="rounded-full bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-400 ring-1 ring-cyan-500/20 transition hover:bg-cyan-500/20">
+      Follow
+    </button>
+  );
 }
