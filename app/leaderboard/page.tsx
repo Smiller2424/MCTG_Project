@@ -1,3 +1,5 @@
+import PerformanceChart from "@/components/charts/PerformanceChart";
+
 // Types
 type Trader = {
   rank: number;
@@ -80,6 +82,11 @@ const traders: Trader[] = [
     followers: 715,
   },
 ];
+
+const performanceData = traders.map((trader) => ({
+  name: trader.name,
+  value: trader.pnl,
+}));
 
 // Helper Functions
 function formatCurrency(value: number) {
@@ -183,6 +190,12 @@ export default function LeaderboardPage() {
             </div>
           ))}
         </section>
+
+        {/* Trader Performance */}
+        <section className="mb-8">
+          <PerformanceChart data={performanceData} />
+          </section>
+
         {/* Leaderboard Table */}
         <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
