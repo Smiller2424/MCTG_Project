@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import PerformanceChart from "@/components/charts/PerformanceChart";
 import WinRateChart from "@/components/charts/WinRateChart";
 
@@ -7,10 +10,12 @@ type Trader = {
   name: string;
   username: string;
   markets: string;
-  winRate: number;
+  volume: number;
   pnl: number;
-  followers: number;
+  verified: boolean;
 };
+
+
 
 // Data
 const leaderboardStats = [
@@ -35,64 +40,6 @@ const leaderboardStats = [
     detail: "Politics • Sports • Crypto • Economics • Global Events",
   },
 ];
-
-const traders: Trader[] = [
-  {
-    rank: 1,
-    name: "ElectionEdge",
-    username: "@electionedge",
-    markets: "Politics",
-    winRate: 71,
-    pnl: 142300,
-    followers: 1254,
-  },
-  {
-    rank: 2,
-    name: "MacroMax",
-    username: "@macromax",
-    markets: "Economics",
-    winRate: 68,
-    pnl: 98750,
-    followers: 1041,
-  },
-  {
-    rank: 3,
-    name: "SportsSharp",
-    username: "@sportssharp",
-    markets: "Sports",
-    winRate: 65,
-    pnl: 76410,
-    followers: 932,
-  },
-  {
-    rank: 4,
-    name: "CryptoVision",
-    username: "@cryptovision",
-    markets: "Crypto",
-    winRate: 63,
-    pnl: 58220,
-    followers: 861,
-  },
-  {
-    rank: 5,
-    name: "WorldWatch",
-    username: "@worldwatch",
-    markets: "Global Events",
-    winRate: 61,
-    pnl: 42100,
-    followers: 715,
-  },
-];
-
-const performanceData = traders.map((trader) => ({
-  name: trader.name,
-  value: trader.pnl,
-}));
-
-const winRateData = traders.map((trader) => ({
-  name: trader.name,
-  value: trader.winRate,
-}));
 
 // Helper Functions
 function formatCurrency(value: number) {
@@ -146,6 +93,61 @@ function FollowButton() {
 
 // Main Page
 export default function LeaderboardPage() {
+  const [traders, setTraders] = useState<Trader[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const performanceData = traders.map((trader) => ({
+  name: trader.name,
+  value: trader.pnl,
+}));
+
+const winRateData = traders.map((trader) => ({
+  name: trader.name,
+  value: 0,
+}));
+
+    async function fetchTopTraders() {
+      try {
+        setIsLoading(true);
+
+        const response = await fetch("http://localhost:8000/api/top-traders");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch top traders");
+        }
+
+        const data = await response.json();
+        setTraders(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    useEffect(() => {
+      fetchTopTraders();
+    }, []);
+
+    const liveStats = leaderboardStats.map((stat) => {
+      if (stat.label === "Top Trader") {
+        return {
+          ...stat,
+          value: isLoading ? "Loading..." : traders[0]?.name ?? "Unavailable",
+          detail: "Highest monthly P/L from Polymarket",
+        };
+      }
+
+      if (stat.label === "Highest Profit") {
+        return {
+          ...stat,
+          value: traders[0] ? formatCurrency(traders[0].pnl) : "Loading...",
+          detail: "Top monthly trader P/L",
+        };
+      }
+
+      return stat;
+    });
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -179,7 +181,7 @@ export default function LeaderboardPage() {
         </section>
         {/* Summary Stats */}
         <section className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {leaderboardStats.map((stat) => (
+          {liveStats.map((stat) => (
             <div
               key={stat.label}
               className="mb-8 rounded-2xl border border-slate-800 bg-slate-900 p-5"
@@ -221,10 +223,11 @@ export default function LeaderboardPage() {
             </div>
 
             <button
-            className="inline-flex items-center gap-2 rounded-xl border border-cyan-500/20 bg-cyan-500/10 px-4 py-2 text-sm font-medium text-cyan-400 transition hover:bg-cyan-500/20"
+              onClick={fetchTopTraders}
+              className="inline-flex items-center gap-2 rounded-xl border border-cyan-500/20 bg-cyan-500/10 px-4 py-2 text-sm font-medium text-cyan-400 transition hover:bg-cyan-500/20"
             >
-                ↻ Refresh Rankings
-                </button>
+              ↻ Refresh Rankings
+            </button>
                 </div>
 
         
@@ -242,7 +245,7 @@ export default function LeaderboardPage() {
              </div>
            
           <select className="rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-sm text-white focus:border-cyan-500 focus:outline-none">
-            <option>Sort By: Win Rate</option>
+            <option>Sort By: Volume</option>
             <option>Sort By: Profit</option>
             <option>Sort By: Followers</option>
             <option>Sort By: Rank</option>
@@ -274,7 +277,7 @@ export default function LeaderboardPage() {
                     </th>
 
                     <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wide text-slate-500">
-                      Followers
+                      Verified
                     </th>
 
                     <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wide text-slate-500">
@@ -310,7 +313,7 @@ export default function LeaderboardPage() {
                       </td>
 
                       <td className="whitespace-nowrap px-4 py-4 text-right text-sm text-white">
-                        {trader.winRate}%
+                        {formatCurrency(trader.volume)}
                       </td>
 
                       <td className="whitespace-nowrap px-4 py-4 text-right">
@@ -318,7 +321,7 @@ export default function LeaderboardPage() {
                       </td>
 
                       <td className="whitespace-nowrap px-4 py-4 text-right text-sm text-slate-300">
-                        {trader.followers.toLocaleString()}
+                        {trader.verified ? "Yes" : "No"}
                       </td>
 
                       <td className="whitespace-nowrap px-4 py-4 text-center">
