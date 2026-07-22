@@ -1,4 +1,5 @@
 import PerformanceChart from "@/components/charts/PerformanceChart";
+import WinRateChart from "@/components/charts/WinRateChart";
 
 // Types
 type Trader = {
@@ -86,6 +87,11 @@ const traders: Trader[] = [
 const performanceData = traders.map((trader) => ({
   name: trader.name,
   value: trader.pnl,
+}));
+
+const winRateData = traders.map((trader) => ({
+  name: trader.name,
+  value: trader.winRate,
 }));
 
 // Helper Functions
@@ -193,8 +199,11 @@ export default function LeaderboardPage() {
 
         {/* Trader Performance */}
         <section className="mb-8">
-          <PerformanceChart data={performanceData} />
-          </section>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <PerformanceChart data={performanceData} />
+            <WinRateChart data={winRateData} />
+            </div>
+            </section>
 
         {/* Leaderboard Table */}
         <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6">

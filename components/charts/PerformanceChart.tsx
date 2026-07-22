@@ -1,4 +1,4 @@
-
+"use client";
 
 import {
   ResponsiveContainer,
@@ -27,7 +27,15 @@ export default function PerformanceChart({ data }: Props) {
       <ResponsiveContainer width="100%" height="90%">
         <LineChart data={data}>
           <CartesianGrid stroke="#1e293b" />
-          <XAxis dataKey="name" stroke="#94a3b8" />
+          <XAxis
+          dataKey="name"
+          stroke="#94a3b8"
+          angle={-25}
+          textAnchor="end"
+          interval={0}
+          height={60}
+          padding={{ left: 20, right: 20 }}
+          />
           <YAxis stroke="#94a3b8" />
           <Tooltip />
           <Line
