@@ -41,19 +41,6 @@ const leaderboardStats = [
   },
 ];
 
-
-
-
-const performanceData = traders.map((trader) => ({
-  name: trader.name,
-  value: trader.pnl,
-}));
-
-const winRateData = traders.map((trader) => ({
-  name: trader.name,
-  value: trader.winRate,
-}));
-
 // Helper Functions
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("en-US", {
@@ -106,8 +93,18 @@ function FollowButton() {
 
 // Main Page
 export default function LeaderboardPage() {
-      const [traders, setTraders] = useState<Trader[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
+  const [traders, setTraders] = useState<Trader[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const performanceData = traders.map((trader) => ({
+  name: trader.name,
+  value: trader.pnl,
+}));
+
+const winRateData = traders.map((trader) => ({
+  name: trader.name,
+  value: 0,
+}));
 
     async function fetchTopTraders() {
       try {
