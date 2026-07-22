@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import PerformanceChart from "@/components/charts/PerformanceChart";
+import WinRateChart from "@/components/charts/WinRateChart";
 
 // Types
 type Trader = {
@@ -41,6 +43,16 @@ const leaderboardStats = [
 
 
 
+
+const performanceData = traders.map((trader) => ({
+  name: trader.name,
+  value: trader.pnl,
+}));
+
+const winRateData = traders.map((trader) => ({
+  name: trader.name,
+  value: trader.winRate,
+}));
 
 // Helper Functions
 function formatCurrency(value: number) {
@@ -189,6 +201,15 @@ export default function LeaderboardPage() {
             </div>
           ))}
         </section>
+
+        {/* Trader Performance */}
+        <section className="mb-8">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <PerformanceChart data={performanceData} />
+            <WinRateChart data={winRateData} />
+            </div>
+            </section>
+
         {/* Leaderboard Table */}
         <section className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
