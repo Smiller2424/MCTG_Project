@@ -3,12 +3,12 @@
 // Route: /landing (app/page.tsx is currently Carter's Portfolio page — this
 // lives at /landing until the team decides on final root routing).
 // Stack: Next.js (App Router) + Tailwind CSS v4
-// Wallet connect button is wired for RainbowKit's <ConnectButton /> — swap in the
-// import below once RainbowKitProvider is set up in app/layout.tsx.
+// Wallet connect is handled by ConnectWalletButton (RainbowKit + Wagmi), a
+// client component, so this page can stay a server component.
 
 import Link from "next/link";
 
-// import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { ConnectWalletButton } from "@/components/ConnectWalletButton";
 
 export default function LandingPage() {
   return (
@@ -30,10 +30,7 @@ export default function LandingPage() {
               How It Works
             </Link>
           </nav>
-          {/* Replace with <ConnectButton /> once RainbowKit is wired up */}
-          <button className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-emerald-400">
-            Connect Wallet
-          </button>
+          <ConnectWalletButton />
         </div>
       </header>
 
@@ -135,9 +132,9 @@ export default function LandingPage() {
         <p className="mt-3 text-slate-400">
           Connect your wallet and follow your first trader in under a minute.
         </p>
-        <button className="mt-8 rounded-lg bg-emerald-500 px-8 py-3 font-semibold text-slate-950 transition hover:bg-emerald-400">
-          Connect Wallet
-        </button>
+        <div className="mt-8 flex justify-center">
+          <ConnectWalletButton full />
+        </div>
       </section>
 
       {/* Footer */}
