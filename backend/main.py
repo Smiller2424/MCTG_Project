@@ -1,57 +1,66 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-import httpx
-
-app = FastAPI()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-POLYMARKET_LEADERBOARD_URL = "https://data-api.polymarket.com/v1/leaderboard"
-
-
-@app.get("/api/top-traders")
-async def get_top_traders():
-    params = {
-        "category": "OVERALL",
-        "timePeriod": "MONTH",
-        "orderBy": "PNL",
-        "limit": 5,
-    }
-
-    async with httpx.AsyncClient(timeout=10) as client:
-        response = await client.get(POLYMARKET_LEADERBOARD_URL, params=params)
-
-    if response.status_code != 200:
-        raise HTTPException(status_code=502, detail="Failed to fetch Polymarket data")
-
-    data = response.json()
-
-    return [
-        {
-            "rank": int(trader["rank"]),
-            "name": trader.get("userName") or "Unknown Trader",
-            "username": f"@{trader['xUsername']}" if trader.get("xUsername") else "@unknown",
-            "markets": "Overall",
-            "volume": trader.get("vol", 0),
-            "pnl": trader.get("pnl", 0),
-            "verified": trader.get("verifiedBadge", False),
-        }
-        for trader in data
-    ]
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from sqlalchemy.orm import Session
 import models
-from database import engine
+from database import engine, get_db
 
-# This creates all the tables in the database based on models.py
+# Create all database tables on startup
 models.Base.metadata.create_all(bind=engine)
 
+app = FastAPI(title="MCTG Polymarket API")
+
+# Seed initial database data if empty
+@app.on_event("startup")
+def startup_event():
+    db = next(get_db())
+    if not db.query(models.User).first():
+        sample_user = models.User(
+            name="Alpha Trader",
+            username="trader1",
+            email="trader1@mctg.io",
+            account_type="Copy Trader"
+        )
+        db.add(sample_user)
+        db.commit()
+        db.refresh(sample_user)
+
+        sample_wallet = models.Wallet(
+            user_id=sample_user.id,
+            wallet_id="W-1001",
+            address="0x3F...9A",
+            balance=12500.50,
+            total_deposited=15000.00
+        )
+        db.add(sample_wallet)
+
+        sample_trade = models.TradeHistory(
+            user_id=sample_user.id,
+            trader_copied="WhaleTrader_01",
+            trade_copied="US Election 2026 - YES",
+            side="BUY",
+            amount=500.00,
+            shares=1000.00,
+            avg_price=0.50,
+            status="EXECUTED"
+        )
+        db.add(sample_trade)
+        db.commit()
+    db.close()
 
 @app.get("/")
 def read_root():
-    return {"message": "Database provisioned and API running."}
+    return {"message": "MCTG Backend API and Database are running live."}
+
+@app.get("/api/users")
+def get_users(db: Session = Depends(get_db)):
+    users = db.query(models.User).all()
+    return users
+
+@app.get("/api/wallet")
+def get_wallet(db: Session = Depends(get_db)):
+    wallet = db.query(models.Wallet).first()
+    return wallet
+
+@app.get("/api/trades")
+def get_trades(db: Session = Depends(get_db)):
+    trades = db.query(models.TradeHistory).all()
+    return trades
