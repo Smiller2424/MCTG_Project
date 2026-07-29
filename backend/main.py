@@ -2,7 +2,13 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import httpx
 
-app = FastAPI()
+import models
+from database import engine
+
+
+models.Base.metadata.create_all(bind=engine)
+
+app = FastAPI(title="MCTG Backend API")
 
 app.add_middleware(
     CORSMiddleware,
@@ -12,7 +18,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-POLYMARKET_LEADERBOARD_URL = "https://data-api.polymarket.com/v1/leaderboard"
+POLYMARKET_LEADERBOARD_URL = (
+    "https://data-api.polymarket.com/v1/leaderboard"
+)
+
+
+@app.get("/")
+def read_root():
+    return {"message": "Database provisioned and API running."}
 
 
 @app.get("/api/top-traders")
@@ -24,11 +37,23 @@ async def get_top_traders():
         "limit": 5,
     }
 
-    async with httpx.AsyncClient(timeout=10) as client:
-        response = await client.get(POLYMARKET_LEADERBOARD_URL, params=params)
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get(
+                POLYMARKET_LEADERBOARD_URL,
+                params=params,
+            )
+    except httpx.RequestError as exc:
+        raise HTTPException(
+            status_code=502,
+            detail="Unable to connect to Polymarket",
+        ) from exc
 
     if response.status_code != 200:
-        raise HTTPException(status_code=502, detail="Failed to fetch Polymarket data")
+        raise HTTPException(
+            status_code=502,
+            detail="Failed to fetch Polymarket data",
+        )
 
     data = response.json()
 
@@ -36,7 +61,11 @@ async def get_top_traders():
         {
             "rank": int(trader["rank"]),
             "name": trader.get("userName") or "Unknown Trader",
-            "username": f"@{trader['xUsername']}" if trader.get("xUsername") else "@unknown",
+            "username": (
+                f"@{trader['xUsername']}"
+                if trader.get("xUsername")
+                else "@unknown"
+            ),
             "markets": "Overall",
             "volume": trader.get("vol", 0),
             "pnl": trader.get("pnl", 0),
@@ -44,15 +73,3 @@ async def get_top_traders():
         }
         for trader in data
     ]
-from fastapi import FastAPI
-import models
-from database import engine
-
-# This creates all the tables in the database based on models.py
-models.Base.metadata.create_all(bind=engine)
-
-app = FastAPI(title="MCTG Backend API")
-
-@app.get("/")
-def read_root():
-    return {"message": "Database provisioned and API running."}
